@@ -31,10 +31,6 @@ from libqtile.utils import guess_terminal
 
 color = {
     "aqua" : "#3C99CF",
-    "orange" : "#F2790A",
-    "red" : "#CF3C3C",
-    "purple" : "#8832E6",
-
     "black" : "#000000",
     "dark-gray" : "#2B2B2B",
     "light-gray" : "#4A4A4A",
@@ -42,7 +38,7 @@ color = {
 }
 
 mod = "mod4"
-terminal = "alacritty"
+terminal = guess_terminal()
 
 keys = [
     # A list of available commands that can be bound to keys can be found
@@ -85,7 +81,7 @@ keys = [
     Key([mod], "r", lazy.spawncmd(), desc="Spawn a command using a prompt widget"),
 ]
 
-groups = [Group(i) for i in "123456"]
+groups = [Group(i) for i in "123456789"]
 
 for i in groups:
     keys.extend(
@@ -112,8 +108,7 @@ for i in groups:
     )
 
 layouts = [
-    layout.Columns(
-        border_focus=color["aqua"], border_normal=color["black"], border_on_single=True, insert_position=1, margin=2, margin_on_single=2),
+    layout.Columns(border_focus=color["aqua"], border_normal=color["black"], border_on_single=True, insert_position=1, margin=2, margin_on_single=2),
     layout.Max(),
     # layout.Stack(num_stacks=2),
     # layout.Bsp(),
