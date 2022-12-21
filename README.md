@@ -1,2 +1,2 @@
-## Config dotfiles
+## Config Files 
 Personal Arch Linux config files
