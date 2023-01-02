@@ -1,4 +1,4 @@
 ## Config Files 
 Personal Arch Linux config files
 
-packages : ttf-jetbrains-mono
+packages : ttf-jetbrains-mono, dmenu

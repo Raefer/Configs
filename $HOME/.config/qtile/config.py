@@ -29,8 +29,12 @@ from libqtile.config import Click, Drag, Group, Key, Match, Screen
 from libqtile.lazy import lazy
 from libqtile.utils import guess_terminal
 
-color = {
+colour = {
     "aqua" : "#3C99CF",
+    "orange" : "#F2790A",
+    "red" : "#CF3C3C",
+    "purple" : "#8832E6",
+
     "black" : "#000000",
     "dark-gray" : "#2B2B2B",
     "light-gray" : "#4A4A4A",
@@ -41,47 +45,31 @@ mod = "mod4"
 terminal = guess_terminal()
 
 keys = [
-    # A list of available commands that can be bound to keys can be found
-    # at https://docs.qtile.org/en/latest/manual/config/lazy.html
-    # Switch between windows
-    Key([mod], "h", lazy.layout.left(), desc="Move focus to left"),
-    Key([mod], "l", lazy.layout.right(), desc="Move focus to right"),
-    Key([mod], "j", lazy.layout.down(), desc="Move focus down"),
-    Key([mod], "k", lazy.layout.up(), desc="Move focus up"),
-    Key([mod], "space", lazy.layout.next(), desc="Move window focus to other window"),
-    # Move windows between left/right columns or move up/down in current stack.
-    # Moving out of range in Columns layout will create new column.
-    Key([mod, "shift"], "h", lazy.layout.shuffle_left(), desc="Move window to the left"),
-    Key([mod, "shift"], "l", lazy.layout.shuffle_right(), desc="Move window to the right"),
-    Key([mod, "shift"], "j", lazy.layout.shuffle_down(), desc="Move window down"),
-    Key([mod, "shift"], "k", lazy.layout.shuffle_up(), desc="Move window up"),
-    # Grow windows. If current window is on the edge of screen and direction
-    # will be to screen edge - window would shrink.
-    Key([mod, "control"], "h", lazy.layout.grow_left(), desc="Grow window to the left"),
-    Key([mod, "control"], "l", lazy.layout.grow_right(), desc="Grow window to the right"),
-    Key([mod, "control"], "j", lazy.layout.grow_down(), desc="Grow window down"),
-    Key([mod, "control"], "k", lazy.layout.grow_up(), desc="Grow window up"),
-    Key([mod], "n", lazy.layout.normalize(), desc="Reset all window sizes"),
-    # Toggle between split and unsplit sides of stack.
-    # Split = all windows displayed
-    # Unsplit = 1 window displayed, like Max layout, but still with
-    # multiple stack panes
-    Key(
-        [mod, "shift"],
-        "Return",
-        lazy.layout.toggle_split(),
-        desc="Toggle between split and unsplit sides of stack",
-    ),
-    Key([mod], "Return", lazy.spawn(terminal), desc="Launch terminal"),
-    # Toggle between different layouts as defined below
-    Key([mod], "Tab", lazy.next_layout(), desc="Toggle between layouts"),
-    Key([mod], "w", lazy.window.kill(), desc="Kill focused window"),
-    Key([mod, "control"], "r", lazy.reload_config(), desc="Reload the config"),
-    Key([mod, "control"], "q", lazy.shutdown(), desc="Shutdown Qtile"),
-    Key([mod], "r", lazy.spawncmd(), desc="Spawn a command using a prompt widget"),
+    # Focus window
+    Key([mod], "h", lazy.layout.left()),
+    Key([mod], "l", lazy.layout.right()),
+    Key([mod], "j", lazy.layout.down()),
+    Key([mod], "k", lazy.layout.up()),
+    # Moving window
+    Key([mod, "shift"], "h", lazy.layout.shuffle_left()),
+    Key([mod, "shift"], "l", lazy.layout.shuffle_right()),
+    Key([mod, "shift"], "j", lazy.layout.shuffle_down()),
+    Key([mod, "shift"], "k", lazy.layout.shuffle_up()),
+    # Grow window
+    Key([mod, "control"], "h", lazy.layout.grow_left()),
+    Key([mod, "control"], "l", lazy.layout.grow_right()),
+    Key([mod, "control"], "j", lazy.layout.grow_down()),
+    Key([mod, "control"], "k", lazy.layout.grow_up()),
+    # Functions
+    Key([mod], "Return", lazy.spawn(terminal)),
+    Key([mod], "Tab", lazy.next_layout()),
+    Key([mod], "x", lazy.window.kill()),
+    Key([mod], "c", lazy.spawn("dmenu_run -fn 'JetBrains Mono-10'")),
+    Key([mod, "control"], "r", lazy.reload_config()),
+    Key([mod, "control"], "q", lazy.shutdown()),
 ]
 
-groups = [Group(i) for i in "123456789"]
+groups = [Group(i) for i in "ASDFGVBNM"]
 
 for i in groups:
     keys.extend(
@@ -89,33 +77,29 @@ for i in groups:
             # mod1 + letter of group = switch to group
             Key(
                 [mod],
-                i.name,
+                i.name.lower(),
                 lazy.group[i.name].toscreen(),
                 desc="Switch to group {}".format(i.name),
             ),
             # mod1 + shift + letter of group = switch to & move focused window to group
             Key(
-                [mod, "shift"],
-                i.name,
+                [mod, "Control"],
+                i.name.lower(),
                 lazy.window.togroup(i.name, switch_group=True),
                 desc="Switch to & move focused window to group {}".format(i.name),
             ),
-            # Or, use below if you prefer not to switch to that group.
-            # # mod1 + shift + letter of group = move focused window to group
-            # Key([mod, "shift"], i.name, lazy.window.togroup(i.name),
-            #     desc="move focused window to group {}".format(i.name)),
         ]
     )
 
 layouts = [
-    layout.Columns(border_focus=color["aqua"], border_normal=color["black"], border_on_single=True, insert_position=1, margin=2, margin_on_single=2),
+    layout.Columns(border_focus=colour["orange"], border_normal=colour["black"], border_on_single=True, insert_position=1, margin=2, margin_on_single=2),
     layout.Max(),
-    # layout.Stack(num_stacks=2),
     # layout.Bsp(),
     # layout.Matrix(),
     # layout.MonadTall(),
     # layout.MonadWide(),
     # layout.RatioTile(),
+    # layout.Stack(),
     # layout.Tile(),
     # layout.TreeTab(),
     # layout.VerticalTile(),
@@ -126,8 +110,8 @@ widget_defaults = dict(
     font="JetBrains Mono",
     fontsize=13,
     padding=3,
-    background=color["dark-gray"],
-    foreground=color["white"]
+    background=colour["dark-gray"],
+    foreground=colour["white"]
 )
 extension_defaults = widget_defaults.copy()
 
@@ -136,19 +120,17 @@ screens = [
         top=bar.Bar(
             [
                 widget.CurrentLayout(),
-                widget.GroupBox(highlight_method="block", active=color["white"], inactive=color["light-gray"], rounded=False),
+                widget.GroupBox(active=colour["white"], inactive=colour["light-gray"], disable_drag=True, highlight_method="block", urgent_alert_method="block", rounded=False),
                 widget.Prompt(),
                 widget.WindowName(),
-                #widget.Chord(chords_colors={"launch": ("#ff0000", "#ffffff"),},name_transform=lambda name: name.upper(),),
-                # NB Systray is incompatible with Wayland, consider using StatusNotifier instead
-                # widget.StatusNotifier(),
+
                 widget.Systray(),
                 widget.Clock(format="%Y-%m-%d %a %H:%M"),
                 widget.QuickExit(),
             ],
             28,
-             border_width=[1, 4, 2, 4],  # Draw top and bottom borders
-             border_color=[color["dark-gray"], color["dark-gray"], color["light-gray"], color["dark-gray"]]  # Borders are magenta
+            border_width=[1, 4, 2, 4],
+            border_color=[colour["dark-gray"], colour["dark-gray"], colour["light-gray"], colour["dark-gray"]]
         ),
     ),
 ]
