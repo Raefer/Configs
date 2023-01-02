@@ -64,7 +64,7 @@ keys = [
     Key([mod], "Return", lazy.spawn(terminal)),
     Key([mod], "Tab", lazy.next_layout()),
     Key([mod], "x", lazy.window.kill()),
-    Key([mod], "c", lazy.spawn("dmenu_run -fn 'JetBrains Mono-10'")),
+    Key([mod], "p", lazy.spawn("dmenu_run -fn 'JetBrains Mono-10'")),
     Key([mod, "control"], "r", lazy.reload_config()),
     Key([mod, "control"], "q", lazy.shutdown()),
 ]
